@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinturas y Reformas Torres | Transformamos espacios, creamos hogares</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;600;700;800&family=Arimo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde-oscuro:#007032;
+    --verde:#1f5140;
+    --verde-claro:#2e6b53;
+    --dorado:#e3a635;
+    --dorado-hover:#cf9527;
+    --crema:#f8f4ec;
+    --blanco:#ffffff;
+    --texto:#2b2b28;
+    --texto-suave:#5c6560;
+    --borde:#e7e2d6;
+    --fuente-titulo:'League Spartan','Glacial Indifference','Arimo',sans-serif;
+    --fuente-cuerpo:'Arimo','Glacial Indifference',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:var(--fuente-cuerpo);
+    color:var(--texto);
+    background:var(--blanco);
+    line-height:1.5;
+  }
+  h1,h2,h3{font-family:var(--fuente-titulo);font-weight:700;color:var(--verde-oscuro);}
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;}
+  img{display:block;max-width:100%;}
+  .contenedor{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ===== MARCADOR DE FOTO =====
+     El usuario reemplaza el "src" del <img> dentro de .foto-slot por su propia foto.
+     Mientras no haya foto real, se ve un recuadro punteado que ocupa TODO el espacio
+     con el nombre de archivo esperado en el centro. */
+  .foto-slot{
+    position:relative;width:100%;height:100%;overflow:hidden;
+    background:linear-gradient(135deg,#eef1ee,#e3ded0);
+  }
+  .foto-slot img{width:100%;height:100%;object-fit:cover;display:block;}
+  .foto-slot::before{
+    content:"";position:absolute;inset:8px;
+    border:2px dashed #b9c2ba;border-radius:8px;
+    pointer-events:none;
+  }
+  .foto-slot::after{
+    content:attr(data-label);
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:0 20px;
+    font-size:13px;font-weight:600;color:var(--texto-suave);
+    background:transparent;
+    pointer-events:none;
+  }
+  .foto-slot.con-foto::before,
+  .foto-slot.con-foto::after{content:none;}
+
+  /* ===== HEADER ===== */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 40px;
+    background:var(--blanco);
+    border-bottom:1px solid var(--borde);
+    position:sticky;top:0;width:100%;z-index:1000;
+  }
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo img{width:64px;height:44px;object-fit:contain;}
+  .logo-texto{line-height:1.15;}
+  .logo-texto .eyebrow{font-size:11px;letter-spacing:1px;color:var(--verde);font-weight:600;}
+  .logo-texto .marca{font-family:var(--fuente-titulo);font-size:22px;font-weight:700;color:var(--verde-oscuro);letter-spacing:1px;}
+  nav ul{display:flex;gap:34px;font-weight:500;font-size:15px;}
+  nav a{color:var(--texto);position:relative;padding-bottom:6px;transition:color .2s;}
+  nav a::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left center;transition:transform .2s;}
+  nav a:hover{color:var(--verde);}
+  nav a:hover::after{transform:scaleX(1);background:var(--dorado);}
+  nav a.activo{color:var(--verde-oscuro);font-weight:600;}
+  nav a.activo::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--dorado);transform:scaleX(1);}
+  .menu-toggle{display:none;flex-direction:column;align-items:center;justify-content:center;width:48px;height:48px;border:none;background:#fff;cursor:pointer;padding:8px;gap:6px;border-radius:14px;box-shadow:0 10px 22px rgba(0,0,0,.08);transition:background .3s;}
+  .menu-toggle:hover{background:#f7f7f7;}
+  .menu-toggle span{display:block;width:26px;height:3px;background:var(--verde-oscuro);border-radius:999px;transition:background .3s;}
+  .menu-toggle.open{background:var(--verde-oscuro);}
+  .menu-toggle.open span{background:#fff;}
+  .menu-toggle.open span:nth-child(1),
+  .menu-toggle.open span:nth-child(2),
+  .menu-toggle.open span:nth-child(3){transform:none;opacity:1;}
+  .btn-whatsapp{
+    display:flex;align-items:center;gap:8px;
+    background:var(--verde-oscuro);color:#fff;
+    padding:12px 22px;border-radius:8px;font-weight:600;font-size:14px;
+    transition:background .2s;
+  }
+  .btn-whatsapp:hover{background:var(--verde);}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    min-height:560px;
+    background:url('imagenes/torreshero.jpg') center/cover no-repeat;
+    background-color:var(--blanco);
+  }
+  .hero-fondo{
+    display:none;
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
+  .hero-fondo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .hero-degradado{
+    position:absolute;inset:0;z-index:1;
+    background:linear-gradient(90deg, rgba(255,255,255,.79) 0%, rgba(255,255,255,.58) 20%, rgba(255,255,255,0) 55%);
+  }
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.45fr 0.55fr;min-height:560px;align-items:center;}
+  .hero-texto{
+    padding:70px 80px 70px 80px;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;z-index:2;
+    max-width:820px;
+  }
+  .hero-texto .eyebrow{color:var(--dorado);font-weight:700;letter-spacing:2px;font-size:14px;text-transform:uppercase;}
+  .hero-texto h1{font-size:64px;font-weight:800;color:var(--verde-oscuro);line-height:1;margin:6px 0 18px;}
+  .hero-texto .subtitulo{font-size:22px;font-weight:600;color:var(--texto);margin-bottom:18px;}
+  .hero-texto .subtitulo span{color:var(--verde);}
+  .hero-texto p{color:var(--texto-suave);max-width:430px;margin-bottom:30px;font-size:15px;}
+  .hero-botones{display:flex;gap:14px;}
+  .btn-primario{background:var(--verde-oscuro);color:#fff;padding:14px 24px;border-radius:8px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:background .2s;}
+  .btn-primario:hover{background:var(--verde);}
+  .btn-dorado{background:var(--dorado);color:#3a2c05;padding:14px 24px;border-radius:8px;font-weight:600;font-size:14px;transition:background .2s;}
+  .btn-dorado:hover{background:var(--dorado-hover);}
+
+  /* franja de beneficios */
+  .beneficios{
+    background:var(--verde-oscuro);
+    margin:0 40px;border-radius:16px;
+    transform:translateY(-40px);
+    position:relative;z-index:5;
+    display:grid;grid-template-columns:repeat(4,1fr);
+    box-shadow:0 20px 40px rgba(20,50,40,.18);
+  }
+  .beneficio{
+    padding:26px 24px;display:flex;gap:14px;align-items:flex-start;
+    border-right:1px solid rgba(255,255,255,.12);
+    color:#fff;
+  }
+  .beneficio:last-child{border-right:none;}
+  .beneficio .icono{
+    width:34px;height:34px;flex-shrink:0;color:var(--dorado);
+  }
+  .beneficio h4{font-family:var(--fuente-cuerpo);font-size:14.5px;font-weight:600;margin-bottom:3px;}
+  .beneficio p{font-size:12.5px;color:#d8e4de;}
+
+  /* ===== SERVICIOS ===== */
+  .servicios{padding:20px 0 80px;text-align:center;}
+  .seccion-cabecera{margin-bottom:44px;}
+  .seccion-cabecera .eyebrow{color:var(--dorado);font-weight:700;letter-spacing:2px;font-size:13px;text-transform:uppercase;}
+  .seccion-cabecera h2{font-size:34px;font-weight:700;margin:6px 0 10px;}
+  .seccion-cabecera .linea{width:56px;height:3px;background:var(--dorado);margin:0 auto;border-radius:2px;}
+
+  .grid-servicios{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:20px;
+  }
+  .card-servicio{
+    background:var(--blanco);border:1px solid var(--borde);border-radius:14px;
+    padding:34px 20px;transition:transform .2s, box-shadow .2s, background .2s, color .2s;
+  }
+  .card-servicio:hover{
+    transform:translateY(-6px);box-shadow:0 14px 30px rgba(20,50,40,.1);
+    background:#ddb233;
+  }
+  .card-servicio .icono{width:46px;height:46px;color:#007032;margin:0 auto 16px;transition:color .2s;}
+  .card-servicio:hover .icono{color:#fff;}
+  .card-servicio h3{font-family:var(--fuente-cuerpo);font-size:16px;font-weight:600;color:#007032;margin-bottom:8px;transition:color .2s;}
+  .card-servicio:hover h3{color:#fff;}
+  .card-servicio p{font-size:13px;color:#007032;transition:color .2s;}
+  .card-servicio:hover p{color:#fff;}
+
+  .btn-outline-dorado{
+    display:inline-block;margin-top:40px;
+    background:var(--dorado);color:#3a2c05;
+    padding:14px 30px;border-radius:8px;font-weight:600;font-size:14px;
+    transition:background .2s;
+  }
+  .btn-outline-dorado:hover{background:var(--dorado-hover);}
+
+  /* ===== GALERIA ===== */
+  .galeria{background:var(--verde-oscuro);padding:70px 0;text-align:center;color:#fff;}
+  .galeria .seccion-cabecera .eyebrow{color:var(--dorado);}
+  .galeria .seccion-cabecera h2{color:#fff;}
+  .grid-galeria{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px;
+  }
+  .foto-galeria{
+    aspect-ratio:1/1;overflow:hidden;border-radius:18px;
+    transition:transform .3s, box-shadow .3s;
+  }
+  .foto-galeria:hover{
+    transform:translateY(-6px);
+    box-shadow:0 24px 48px rgba(0,0,0,.16);
+  }
+  .foto-galeria img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease;
+  }
+  .foto-galeria:hover img{transform:scale(1.08);}
+
+  /* ===== SOBRE NOSOTROS ===== */
+  .sobre-nosotros{padding:100px 0;}
+  .sobre-grid{display:grid;grid-template-columns:0.95fr 1.05fr;gap:46px;align-items:start;}
+  .sobre-content{display:grid;grid-template-columns:1fr;gap:28px;align-content:start;}
+  .sobre-foto{border-radius:28px;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(20,50,30,.12);background:#f8f4ec;align-self:start;max-height:380px;aspect-ratio:16 / 10;}
+  .sobre-foto .foto-slot{display:block;width:100%;height:100%;}
+  .sobre-foto img{width:100%;height:100%;object-fit:cover;display:block;}
+  .sobre-texto{max-width:100%;padding-right:0;}
+  .sobre-texto .eyebrow{color:var(--dorado);font-weight:700;letter-spacing:2px;font-size:13px;text-transform:uppercase;margin-bottom:12px;display:inline-block;position:relative;}
+  .sobre-texto .eyebrow::after{content:'';position:absolute;left:0;bottom:-10px;width:70px;height:3px;background:var(--verde-oscuro);border-radius:999px;}
+  .sobre-texto h2{font-size:44px;margin:0 0 24px;line-height:1.05;max-width:100%;}
+  .sobre-texto p{color:var(--texto-suave);font-size:16px;margin-bottom:20px;max-width:100%;line-height:1.85;}
+  .sobre-texto p b{color:var(--verde-oscuro);}
+  .btn-verde-oscuro{
+    display:inline-flex;align-items:center;gap:12px;margin-top:18px;
+    background:var(--verde-oscuro);color:#fff;
+    padding:16px 30px;border-radius:999px;font-weight:700;font-size:15px;
+    box-shadow:0 22px 48px rgba(17,73,39,.16);transition:transform .2s, background .2s;
+  }
+  .btn-verde-oscuro:hover{background:#134824;transform:translateY(-1px);}
+  .stats-wrapper{padding:28px 0 8px;}
+  .stats-grid{
+    display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));
+    gap:24px;margin:0;max-width:100%;justify-self:stretch;align-items:start;
+  }
+  .stat-card{
+    background:#fff;border-radius:24px;padding:22px 20px;text-align:center;box-shadow:0 24px 56px rgba(7,36,18,.08);
+  }
+  .stat-card .icono{width:34px;height:34px;color:var(--verde);margin:0 auto 14px;}
+  .stat-card .numero{font-family:var(--fuente-titulo);font-size:26px;font-weight:800;color:var(--verde-oscuro);margin-bottom:10px;}
+  .stat-card .etiqueta{font-size:13px;color:var(--texto-suave);line-height:1.7;}
+
+  /* ===== OPINIONES ===== */
+  .opiniones{background:var(--verde-oscuro);padding:80px 0;text-align:center;color:#fff;}
+  .opiniones .seccion-cabecera h2{color:#fff;}
+  .grid-opiniones{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px;text-align:left;}
+  .card-opinion{
+    background:#fff;border-radius:14px;padding:28px;position:relative;color:var(--texto);
+  }
+  .estrellas{color:var(--dorado);font-size:15px;margin-bottom:12px;letter-spacing:2px;}
+  .card-opinion p{font-size:14px;color:var(--texto-suave);margin-bottom:20px;font-style:italic;}
+  .card-opinion .autor{font-weight:600;color:var(--verde-oscuro);font-size:14px;}
+  .comillas{
+    position:absolute;bottom:20px;right:20px;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--dorado);color:#3a2c05;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{background:#007032;color:#cfe0d7;padding:60px 0 26px;}
+  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr 0.8fr;gap:24px;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,.1);}
+  .footer-logo{display:flex;gap:10px;align-items:center;margin-bottom:14px;}
+  .footer-logo img{width:38px;height:38px;object-fit:contain;}
+  .footer-logo .marca{font-family:var(--fuente-titulo);font-size:19px;color:#fff;font-weight:700;}
+  .footer-logo .eyebrow{font-size:10px;color:var(--dorado);letter-spacing:1px;}
+  footer h5{color:#fff;font-size:13px;letter-spacing:1px;margin-bottom:14px;font-weight:600;}
+  footer li{margin-bottom:9px;font-size:13.5px;}
+  footer li a:hover{color:var(--dorado);}
+  .contacto-item{display:flex;gap:8px;align-items:center;margin-bottom:10px;font-size:13.5px;}
+  .redes{display:flex;gap:10px;margin-top:6px;}
+  .redes a{
+    width:32px;height:32px;border-radius:50%;background:#fff;color:var(--verde-oscuro);
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+  }
+  .footer-bottom{padding-top:20px;text-align:center;font-size:12.5px;color:#9db3a8;}
+
+  .flotante-whatsapp{
+    position:fixed;bottom:26px;right:26px;
+    width:56px;height:56px;border-radius:50%;
+    background:#25D366;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;box-shadow:0 8px 20px rgba(0,0,0,.25);
+    z-index:50;
+  }
+
+  @media(max-width:1024px){
+    header{padding:18px 28px 18px 28px;}
+    .menu-toggle{display:flex;position:absolute;top:18px;right:18px;z-index:20;}
+    .btn-whatsapp{display:none !important;}
+    nav{display:none;position:absolute;top:80px;right:18px;width:220px;background:#fff;box-shadow:0 20px 45px rgba(0,0,0,.12);border-radius:18px;border:1px solid rgba(0,0,0,.08);overflow:hidden;}
+    nav.open{display:block;}
+    nav ul{display:flex;flex-direction:column;gap:0;padding:10px 0;}
+    nav li{border-bottom:1px solid rgba(0,0,0,.06);}
+    nav li:last-child{border-bottom:none;}
+    nav a{display:block;padding:12px 18px;font-size:14px;}
+     /* adjust hero to show top of image on medium screens
+       also use responsive mobile image for tablet/medium widths to ensure visibility */
+    .hero{min-height:480px;background:transparent;background-image:url('imagenes/TORRERESPON.jpg');background-position:center 18%;background-size:cover;background-repeat:no-repeat;}
+    .hero-fondo{background:none;}
+    .hero-fondo img{display:none;}
+    /* hide the placeholder pseudo-elements when using the CSS background image */
+    .hero-fondo::before,
+    .hero-fondo::after{content:none !important;}
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-degradado{background:linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 60%);}    
+    .beneficios{grid-template-columns:repeat(2,1fr);}    
+    .beneficio{border-right:none;border-bottom:1px solid rgba(255,255,255,.12);}    
+    .grid-servicios{grid-template-columns:repeat(2,1fr);}    
+    .grid-galeria{grid-template-columns:repeat(3,1fr);}    
+    .sobre-grid{grid-template-columns:1fr;}    
+    .sobre-content{display:grid;grid-template-columns:1fr;gap:24px;}
+    .sobre-foto{min-height:auto;aspect-ratio:16 / 10;}
+    .stats-grid{grid-template-columns:repeat(2,minmax(220px,1fr));margin-left:0;margin-top:20px;justify-self:stretch;}    
+    .grid-opiniones{grid-template-columns:1fr;}    
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:768px){
+    header{padding:16px 20px 16px 20px;}
+    .logo img{width:56px;height:56px;}
+    .btn-whatsapp{margin-right:90px;}
+    nav ul{gap:12px;justify-content:center;}
+    .hero-texto{padding:36px 20px 36px 20px;}
+    .hero-texto h1{font-size:48px;}
+    .hero-texto .subtitulo{font-size:18px;}
+    .hero-botones{flex-direction:column;align-items:flex-start;gap:12px;}
+    .btn-primario,.btn-dorado{width:100%;justify-content:center;}
+    .beneficios{grid-template-columns:1fr;transform:translateY(0);margin:20px 0 0;box-shadow:none;}
+    .card-servicio{padding:28px 18px;}
+    .grid-servicios{grid-template-columns:1fr;}
+    .grid-galeria{grid-template-columns:repeat(2,1fr);gap:18px;}
+    .sobre-texto{padding-top:20px;}
+    .stats-grid{grid-template-columns:1fr;gap:16px;margin-left:0;}
+    .footer-grid{grid-template-columns:1fr;gap:20px;}
+    /* small tablets: show upper portion of hero image */
+    .hero{min-height:420px;}
+    .hero-fondo img{object-position:center 12%;height:100%;}
+    .sobre-foto{background-position:center top;min-height:auto;max-width:520px;width:100%;margin:0 auto;aspect-ratio:16 / 10;}
+  }
+  @media(max-width:600px){
+    header{padding:14px 16px;}
+    .logo{gap:8px;}
+    .logo img{width:48px;height:48px;}
+    .logo-texto .marca{font-size:20px;}
+    nav ul{flex-direction:column;align-items:center;gap:12px;}
+    .hero-texto h1{font-size:42px;}
+    .hero-texto .subtitulo{font-size:18px;}
+    .hero-texto p{max-width:none;}
+    .hero-botones{width:100%;}
+    .btn-whatsapp{width:100%;justify-content:center;}
+    .btn-primario,.btn-dorado{width:100%;}
+    .beneficios{margin:16px 0 0;}
+    .grid-galeria{grid-template-columns:1fr;}
+    .foto-galeria{border-radius:16px;}
+    .footer{padding:40px 0 24px;}
+    .footer-grid{grid-template-columns:1fr;}
+    .flotante-whatsapp{right:16px;bottom:16px;}
+    /* mobile: center and show the very top area of the hero image */
+    .hero{min-height:360px;}
+    /* Use the user-provided mobile image as a background to guarantee display on small screens */
+    .hero{background:transparent;background-image:url('imagenes/TORRERESPON.jpg');background-position:center 8%;background-size:cover;background-repeat:no-repeat;}
+    /* hide the <img> when using the mobile background to avoid duplicate sources */
+    .hero-fondo{background:none;}
+    .hero-fondo img{display:none;}
+    /* reduce the white overlay on mobile so the image remains visible */
+    .hero-degradado{background:linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 60%);}    
+    .hero-fondo::before,
+    .hero-fondo::after{content:none !important;}
+    .sobre-foto{background-position:center top;min-height:auto;max-width:440px;width:100%;margin:0 auto;aspect-ratio:16 / 10;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="logo">
+    <!-- FOTO: reemplaza por el logo real -->
+    <img src="imagenes/logotorres.PNG" alt="Logo Pinturas y Reformas Torres" onerror="this.style.display='none'">
+    <div class="logo-texto">
+      <div class="eyebrow">PINTURAS Y REFORMAS</div>
+      <div class="marca">TORRES</div>
+    </div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#inicio" class="activo">Inicio</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+      <li><a href="#opiniones">Opiniones</a></li>
+    </ul>
+  </nav>
+  <button class="menu-toggle" type="button" aria-label="Abrir menú">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <a href="https://wa.me/34672097570" class="btn-whatsapp" target="_blank" rel="noreferrer noopener">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.82L2.05 22l5.42-1.32c1.38.72 2.94 1.13 4.57 1.13 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.83 14.1c-.24.68-1.4 1.3-1.93 1.35-.5.05-1.03.24-3.45-.72-2.9-1.16-4.75-4.1-4.9-4.29-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.08.99-2.37.26-.28.57-.35.76-.35h.55c.18 0 .42-.03.65.5.24.55.82 1.9.89 2.03.07.14.12.3.02.49-.1.19-.15.3-.3.46-.14.16-.3.36-.43.48-.14.14-.29.29-.13.57.17.28.75 1.24 1.61 2 .17-.16.35-.32.5-.5s1.15-1.14 1.32-1.35c.16-.2.33-.24.55-.15.22.09.55.15.79.29.24.14 1.5.71 1.75.84.25.13.42.19.48.3.06.11.06.63-.18 1.31z"/></svg>
+    WhatsApp
+  </a>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="inicio">
+  <!-- FOTO: reemplaza el src por la foto real del interior/sala. Es el FONDO de todo el hero. -->
+  <div class="foto-slot hero-fondo" data-label="Foto de fondo: torreshero.jpg (reemplázala aquí)">
+    <picture>
+      <source media="(max-width:600px)" srcset="imagenes/TORRERESPON.jpg">
+      <source media="(max-width:1024px)" srcset="imagenes/torreshero-tablet.jpg">
+      <img src="imagenes/torreshero.jpg" alt="Sala reformada por Pinturas y Reformas Torres" onload="this.closest('.foto-slot').classList.add('con-foto')" onerror="this.closest('.foto-slot').classList.remove('con-foto')">
+    </picture>
+  </div>
+  <div class="hero-degradado"></div>
+
+  <div class="hero-grid">
+    <div class="hero-texto">
+      <div class="eyebrow">Pinturas y Reformas</div>
+      <h1>TORRES</h1>
+      <div class="subtitulo">Transformamos espacios,<br><span>creamos hogares.</span></div>
+      <p style="color:#000;">Somos especialistas en pintura y reformas integrales. Calidad, compromiso y atención personalizada en cada proyecto.</p>
+      <div class="hero-botones">
+        <a href="https://wa.me/34672097570" class="btn-primario" target="_blank" rel="noreferrer noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.82L2.05 22l5.42-1.32c1.38.72 2.94 1.13 4.57 1.13 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2z"/></svg>
+          Escríbenos por WhatsApp
+        </a>
+        <a href="https://wa.me/34672097570" class="btn-dorado" target="_blank" rel="noreferrer noopener">Solicita tu presupuesto</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="beneficios contenedor-full">
+    <div class="beneficio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div><h4>Calidad garantizada</h4><p>Materiales de primera y acabados impecables.</p></div>
+    </div>
+    <div class="beneficio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><path d="M14.5 15c2.6.2 4.5 2 4.5 5"/></svg>
+      <div><h4>Equipo profesional</h4><p>Trabajamos con expertos en cada área.</p></div>
+    </div>
+    <div class="beneficio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg>
+      <div><h4>Cumplimos plazos</h4><p>Nos comprometemos con tu tiempo.</p></div>
+    </div>
+    <div class="beneficio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="5"/><path d="m8.5 12.5-2 8 5.5-3 5.5 3-2-8"/></svg>
+      <div><h4>Atención personalizada</h4><p>Te acompañamos en todo el proceso.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICIOS ===== -->
+<section class="servicios contenedor" id="servicios">
+  <div class="seccion-cabecera">
+    <div class="eyebrow">Servicios</div>
+    <h2>¿Qué hacemos?</h2>
+    <div class="linea"></div>
+  </div>
+
+  <div class="grid-servicios">
+    <div class="card-servicio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 15c3-1 5-3 8-3s5 2 8 3"/><path d="M9 12 15 6l3 3-6 6-3 1z"/><circle cx="7" cy="18" r="1.4"/></svg>
+      <h3>Pintura Interior y Exterior</h3>
+      <p>Acabados profesionales para renovar y proteger tus espacios.</p>
+    </div>
+    <div class="card-servicio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
+      <h3>Reformas Integrales</h3>
+      <p>Transformamos tu hogar o negocio con soluciones completas.</p>
+    </div>
+    <div class="card-servicio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M12 4v16M4 12h16"/></svg>
+      <h3>Pladur</h3>
+      <p>Instalación de tabiques, techos y soluciones en pladur a medida.</p>
+    </div>
+    <div class="card-servicio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 4h6v4a3 3 0 0 1-3 3 3 3 0 0 1-3-3V4Z"/><path d="M10 11v3M7 20h6M10 14a3 3 0 0 1 3 3v3"/></svg>
+      <h3>Fontanería</h3>
+      <p>Instalaciones, reparaciones y mantenimiento con total garantía.</p>
+    </div>
+    <div class="card-servicio">
+      <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+      <h3>Electricidad</h3>
+      <p>Instalaciones eléctricas seguras y eficientes para tu hogar o empresa.</p>
+    </div>
+  </div>
+
+  <a href="#" class="btn-outline-dorado">Ver todos los servicios</a>
+</section>
+
+<!-- ===== GALERÍA ===== -->
+<section class="galeria" id="galeria">
+  <div class="contenedor">
+    <div class="seccion-cabecera">
+      <div class="eyebrow">Galería</div>
+      <h2>Nuestros trabajos</h2>
+      <div class="linea"></div>
+    </div>
+
+    <div class="grid-galeria">
+      <!-- FOTOS: reemplaza cada src por la foto real del trabajo correspondiente. Cada una ocupa TODO su recuadro. -->
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-salon-01.jpg"><img src="imagenes/galeria-salon-01.jpg" alt="Trabajo 1 - salón reformado" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+       <div class="foto-galeria"><div class="foto-slot" data-label="galeria-cocina-03.jpg"><img src="imagenes/galeria-cocina-03.jpg" alt="Trabajo 3 - cocina reformada" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-fachada-02.jpg"><img src="imagenes/galeria-fachada-02.jpg" alt="Trabajo 2 - fachada de vivienda" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-pasillo-04.jpg"><img src="imagenes/galeria-pasillo-04.jpg" alt="Trabajo 4 - pasillo con iluminación" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-bano-05.jpg"><img src="imagenes/galeria-bano-05.jpg" alt="Trabajo 5 - baño reformado" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-entrada-06.jpg"><img src="imagenes/galeria-entrada-06.jpg" alt="Trabajo 6 - entrada de vivienda" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-ba%C3%B1o-07.jpg"><img src="imagenes/galeria-bano-07.jpg" alt="Trabajo 7 - reforma adicional" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+      <div class="foto-galeria"><div class="foto-slot" data-label="galeria-obra-08.jpg"><img src="imagenes/galeria-obra-08.jpg" alt="Trabajo 8 - proyecto extra" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SOBRE NOSOTROS ===== -->
+<section class="sobre-nosotros" id="sobre-nosotros">
+  <div class="contenedor sobre-grid">
+    <div class="sobre-foto">
+      <!-- FOTO: reemplaza el src por la foto real del equipo/pintor. Ocupa TODO este recuadro. -->
+      <div class="foto-slot" data-label="nosotros.jpg">
+        <img src="imagenes/nosotros.jpg" alt="Equipo de Pinturas y Reformas Torres trabajando" onload="this.parentElement.classList.add('con-foto')" onerror="this.parentElement.classList.remove('con-foto')">
+      </div>
+    </div>
+    <div class="sobre-content">
+      <div class="sobre-texto">
+        <div class="eyebrow">Sobre nosotros</div>
+        <h2>Pasión por transformar cada espacio</h2>
+        <p>En <b>Pinturas y Reformas Torres</b> contamos con años de experiencia ofreciendo soluciones de pintura y reformas con los más altos estándares de calidad.</p>
+        <a href="https://www.facebook.com/share/1DJuQ8m3dL/" class="btn-verde-oscuro" target="_blank" rel="noreferrer noopener">Conócenos mejor</a>
+      </div>
+    </div>
+  </div>
+  <div class="contenedor stats-wrapper">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+        <div class="numero"><span class="count-number" data-target="10" data-prefix="+">0</span><span class="count-suffix"> años</span></div>
+        <div class="etiqueta">de experiencia</div>
+      </div>
+      <div class="stat-card">
+        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+        <div class="numero"><span class="count-number" data-target="50" data-prefix="+">0</span></div>
+        <div class="etiqueta">proyectos realizados</div>
+      </div>
+      <div class="stat-card">
+        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8 15c1 1.2 2.4 2 4 2s3-.8 4-2"/></svg>
+        <div class="numero"><span class="count-number" data-target="100" data-suffix="%">0</span></div>
+        <div class="etiqueta">clientes satisfechos</div>
+      </div>
+      <div class="stat-card">
+        <svg class="icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <div class="numero">Garantía</div>
+        <div class="etiqueta">100% en calidad y detalles</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPINIONES ===== -->
+<section class="opiniones" id="opiniones">
+  <div class="contenedor">
+    <div class="seccion-cabecera">
+      <div class="eyebrow">Opiniones</div>
+      <h2>Lo que dicen nuestros clientes</h2>
+      <div class="linea"></div>
+    </div>
+
+    <div class="grid-opiniones">
+      <div class="card-opinion">
+        <div class="estrellas">★★★★★</div>
+        <p>"Excelente trabajo, muy profesionales y cumplieron los plazos. Mi casa quedó chula, totalmente recomendados."</p>
+        <div class="autor">— Laura G.</div>
+        <div class="comillas">"</div>
+      </div>
+      <div class="card-opinion">
+        <div class="estrellas">★★★★★</div>
+        <p>"Los mejores en reformas, atención de primera y acabados impecables. Sin duda volvería a contratarlos."</p>
+        <div class="autor">— Carlos M.</div>
+        <div class="comillas">"</div>
+      </div>
+      <div class="card-opinion">
+        <div class="estrellas">★★★★★</div>
+        <p>"Muy satisfechos con el resultado, se nota la experiencia y el compromiso en cada detalle."</p>
+        <div class="autor">— Marta R.</div>
+        <div class="comillas">"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="contenedor">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <!-- FOTO: reemplaza por el logo real -->
+          <img src="imagenes/logo-torres-footer.png" alt="Logo Pinturas y Reformas Torres" onerror="this.style.display='none'">
+          <div>
+            <div class="eyebrow">PINTURAS Y REFORMAS</div>
+            <div class="marca">TORRES</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h5>NAVEGACIÓN</h5>
+        <ul>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#galeria">Galería</a></li>
+          <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+          <li><a href="#opiniones">Opiniones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>SERVICIOS</h5>
+        <ul>
+          <li><a href="#">Pintura Interior y Exterior</a></li>
+          <li><a href="#">Reformas Integrales</a></li>
+          <li><a href="#">Pladur</a></li>
+          <li><a href="#">Fontanería</a></li>
+          <li><a href="#">Electricidad</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>CONTACTO</h5>
+        <div class="contacto-item">📞 672 09 75 70</div>
+        <div class="contacto-item">✉️ mesiastorresda2706@gmail.com</div>
+        <div class="contacto-item">📍 Vera-almeria, España</div>
+      </div>
+      <div>
+        <h5>SÍGUENOS</h5>
+        <div class="redes">
+          <a href="https://www.facebook.com/share/1DJuQ8m3dL/" target="_blank" rel="noreferrer noopener">f</a>
+          <a href="https://www.instagram.com/mesias1713?igsh=MXNsd3pobnVzcWJkMg==" target="_blank" rel="noreferrer noopener">◎</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Pinturas y Reformas Torres. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<a href="https://wa.me/34672097570" class="flotante-whatsapp" target="_blank" rel="noreferrer noopener">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.82L2.05 22l5.42-1.32c1.38.72 2.94 1.13 4.57 1.13 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.83 14.1c-.24.68-1.4 1.3-1.93 1.35-.5.05-1.03.24-3.45-.72-2.9-1.16-4.75-4.1-4.9-4.29-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.08.99-2.37.26-.28.57-.35.76-.35h.55c.18 0 .42-.03.65.5.24.55.82 1.9.89 2.03.07.14.12.3.02.49-.1.19-.15.3-.3.46-.14.16-.3.36-.43.48-.14.14-.29.29-.13.57.17.28.75 1.24 1.61 2 .17-.16.35-.32.5-.5s1.15-1.14 1.32-1.35c.16-.2.33-.24.55-.15.22.09.55.15.79.29.24.14 1.5.71 1.75.84.25.13.42.19.48.3.06.11.06.63-.18 1.31z"/></svg>
+</a>
+
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navMenu = document.querySelector('nav');
+  const navLinks = document.querySelectorAll('nav a');
+  const sectionIds = Array.from(navLinks)
+    .map(link => link.getAttribute('href'))
+    .filter(href => href && href.startsWith('#'))
+    .map(hash => hash.slice(1));
+  const sections = sectionIds
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  const closeMenu = () => {
+    navMenu.classList.remove('open');
+    menuToggle.classList.remove('open');
+    menuToggle.setAttribute('aria-label', 'Abrir menú');
+  };
+
+  const toggleMenu = () => {
+    const open = navMenu.classList.toggle('open');
+    menuToggle.classList.toggle('open', open);
+    menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  };
+
+  const setActiveLink = (hash) => {
+    navLinks.forEach(link => {
+      link.classList.toggle('activo', link.getAttribute('href') === hash);
+    });
+  };
+
+  const getCurrentSectionHash = () => {
+    const offset = window.innerHeight * 0.3;
+    let currentHash = '#inicio';
+
+    sections.forEach(section => {
+      const top = section.getBoundingClientRect().top;
+      if (top <= offset) {
+        currentHash = `#${section.id}`;
+      }
+    });
+
+    return currentHash;
+  };
+
+  const animateCounters = () => {
+    const counters = document.querySelectorAll('.count-number');
+    const defaultDuration = 2200; // slower by default
+
+    const easeOutCubic = (t) => (--t) * t * t + 1;
+
+    counters.forEach(counter => {
+      const target = Number(counter.dataset.target || 0);
+      const duration = Number(counter.datasetDuration) || defaultDuration;
+      const prefix = counter.dataset.prefix || '';
+      const suffix = counter.dataset.suffix || '';
+
+      let started = false;
+
+      const startTime = performance.now();
+
+      const tick = (now) => {
+        if (!started) started = true;
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+        const value = Math.round(target * eased);
+        counter.textContent = `${prefix}${value}${suffix}`;
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+
+      requestAnimationFrame(tick);
+    });
+  };
+
+  let ticking = false;
+  let countersAnimated = false;
+  const updateActiveSection = () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        setActiveLink(getCurrentSectionHash());
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  const startCountersOnView = () => {
+    const aboutSection = document.getElementById('sobre-nosotros');
+    if (!aboutSection || countersAnimated) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          countersAnimated = true;
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(aboutSection);
+  };
+
+  window.addEventListener('scroll', updateActiveSection);
+  window.addEventListener('resize', updateActiveSection);
+  window.addEventListener('load', () => {
+    setActiveLink(window.location.hash || '#inicio');
+    updateActiveSection();
+    startCountersOnView();
+  });
+  window.addEventListener('hashchange', () => setActiveLink(window.location.hash || '#inicio'));
+
+  menuToggle?.addEventListener('click', toggleMenu);
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      closeMenu();
+      setTimeout(() => {
+        setActiveLink(link.getAttribute('href'));
+      }, 100);
+    });
+  });
+</script>
+
+</body>
+</html>
